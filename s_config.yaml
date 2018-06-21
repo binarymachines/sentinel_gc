@@ -1,0 +1,69 @@
+# 
+# YAML init file for SNAP microservice framework
+#
+#
+
+
+globals:
+        bind_host:                   127.0.0.1
+        port:                        5000
+        debug:                       True
+        logfile:                     sentinel.log
+        project_directory:           $SENTINEL_HOME
+        transform_function_module:   s_transforms
+        service_module:              s_services 
+        preprocessor_module:         s_decode
+
+
+service_objects:
+        test_service:
+                class: TestServiceObject
+                init_params:
+                        - name: host
+                          value: localhost
+
+        gcloud_config:
+                class: GoogleCloudConfigService
+                init_params:
+                        - name: PUBSUB_VERIFICATION_TOKEN
+                          value: $PUBSUB_VERIFICATION_TOKEN
+
+                        - name: PUBSUB_TOPIC
+                          value: $PUBSUB_TOPIC
+
+                        - name: PROJECT
+                          value: $GOOGLE_CLOUD_PROJECT
+
+data_shapes:
+        default:
+                fields:
+
+        test_shape:
+                fields:
+                        - name: placeholder
+                          datatype: string
+                          required: True
+                        - name: day
+                          datatype: string
+                          required: True
+
+
+transforms:
+        ping:
+            route:              /ping
+            method:             GET
+            input_shape:        default
+            output_mimetype:    application/json
+            
+        test:
+            route:              /test
+            method:             GET
+            input_shape:        test_shape
+            output_mimetype:    application/json
+
+error_handlers:
+        - error:                NoSuchObjectException
+          tx_status_code:       HTTP_NOT_FOUND 
+                
+        - error:                DuplicateIDException
+          tx_status_code:       HTTP_BAD_REQUEST
