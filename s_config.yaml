@@ -3,7 +3,6 @@
 #
 #
 
-
 globals:
         bind_host:                   127.0.0.1
         port:                        5000
@@ -38,6 +37,14 @@ data_shapes:
         default:
                 fields:
 
+        event:
+                fields:
+                        - name: token
+                          datatype: string
+                          required: True
+                        - name: message
+                          datatype: string
+                          required: True
         test_shape:
                 fields:
                         - name: placeholder
@@ -60,6 +67,13 @@ transforms:
             method:             GET
             input_shape:        test_shape
             output_mimetype:    application/json
+
+        pubsub_push:
+            route:              /pubsub/push
+            method:             POST
+            input_shape:        event
+            output_mimetype:    application/json
+
 
 error_handlers:
         - error:                NoSuchObjectException
