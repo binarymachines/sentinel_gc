@@ -1,0 +1,8 @@
+gcloud init
+gcloud iam service-accounts create binary-test
+gcloud projects add-iam-policy-binding tutorial-208207 --member "serviceAccount:binary-test@tutorial-208207.iam.gserviceaccount.com" --role "roles/owner"
+
+gcloud iam service-accounts keys create gcloud_sentinel_key.json --iam-account binary-test@tutorial-208207.iam.gserviceaccount.com
+
+export GOOGLE_APPLICATION_CREDENTIALS=~/.gcp_keys/gcloud_sentinel_key.json
+

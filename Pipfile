@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 docopt = "*"
 snap-micro = "*"
+google-cloud-pubsub = "*"
+gunicorn = "*"
 
 [dev-packages]
 

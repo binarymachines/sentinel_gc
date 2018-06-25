@@ -19,6 +19,9 @@ regen: clean
 spinup: 
 	export SENTINEL_HOME=`pwd`; pipenv run python sentinel.py --configfile s_config.yaml
 
+run-wsgi:
+	export SENTINEL_HOME=`pwd`; pipenv run gunicorn -b :8080 sentinel:app
+
 test:	clean
 	export SENTINEL_HOME=`pwd`; pipenv run python -m unittest discover -s snap ./tests -v
 
