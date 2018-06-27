@@ -12,6 +12,7 @@ from snap.loggers import request_logger as log
 MESSAGES = []
 
 def ping_func(input_data, service_objects, **kwargs):
+    log.info('### inside ping endpoint. Application is alive.')
     return core.TransformStatus(json.dumps({'message': 'the SNAP application is alive.'}))
 
 
