@@ -56,6 +56,12 @@ event = core.InputShape("event")
 event.add_field('token', True)
 event.add_field('message', True)
 
+event = core.InputShape("event")
+event.add_field('token', True)
+event.add_field('message', True)
+
+default = core.InputShape("default")
+
 
 #------------------------------
 
@@ -64,6 +70,8 @@ event.add_field('message', True)
 xformer.register_transform('ping', default, s_transforms.ping_func, 'application/json')
 xformer.register_transform('test', test_shape, s_transforms.test_func, 'application/json')
 xformer.register_transform('pubsub_push', event, s_transforms.pubsub_push_func, 'application/json')
+xformer.register_transform('pubsub_push_alt', event, s_transforms.pubsub_push_alt_func, 'application/json')
+xformer.register_transform('noop', default, s_transforms.noop_func, 'application/json')
 
 #------------------------------
 
@@ -135,6 +143,56 @@ def pubsub_push():
         
         transform_status = xformer.transform('pubsub_push', input_data, headers=request.headers)        
         output_mimetype = xformer.target_mimetype_for_transform('pubsub_push')
+
+        if transform_status.ok:
+            return Response(transform_status.output_data, status=snap.HTTP_OK, mimetype=output_mimetype)
+        return Response(json.dumps(transform_status.user_data), 
+                        status=transform_status.get_error_code() or snap.HTTP_DEFAULT_ERRORCODE, 
+                        mimetype=output_mimetype) 
+    except Exception as err:
+        log.error("Exception thrown: ", exc_info=1)        
+        raise err
+
+
+@app.route('/_ah/push-handlers/test', methods=['POST'])
+def pubsub_push_alt():
+    try:
+        if app.debug:
+            # dump request headers for easier debugging
+            log.info('### HTTP request headers:')
+            log.info(request.headers)
+
+        input_data = {}
+        request.get_data()
+        input_data.update(core.map_content(request))
+        
+        transform_status = xformer.transform('pubsub_push_alt', input_data, headers=request.headers)        
+        output_mimetype = xformer.target_mimetype_for_transform('pubsub_push_alt')
+
+        if transform_status.ok:
+            return Response(transform_status.output_data, status=snap.HTTP_OK, mimetype=output_mimetype)
+        return Response(json.dumps(transform_status.user_data), 
+                        status=transform_status.get_error_code() or snap.HTTP_DEFAULT_ERRORCODE, 
+                        mimetype=output_mimetype) 
+    except Exception as err:
+        log.error("Exception thrown: ", exc_info=1)        
+        raise err
+
+
+@app.route('/', methods=['POST'])
+def noop():
+    try:
+        if app.debug:
+            # dump request headers for easier debugging
+            log.info('### HTTP request headers:')
+            log.info(request.headers)
+
+        input_data = {}
+        request.get_data()
+        input_data.update(core.map_content(request))
+        
+        transform_status = xformer.transform('noop', input_data, headers=request.headers)        
+        output_mimetype = xformer.target_mimetype_for_transform('noop')
 
         if transform_status.ok:
             return Response(transform_status.output_data, status=snap.HTTP_OK, mimetype=output_mimetype)

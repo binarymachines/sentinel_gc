@@ -74,6 +74,18 @@ transforms:
             input_shape:        event
             output_mimetype:    application/json
 
+        pubsub_push_alt:
+            route:              /_ah/push-handlers/test
+            method:             POST
+            input_shape:        event
+            output_mimetype:    application/json
+
+        noop:
+            route:              /
+            method:             POST
+            input_shape:        default
+            output_mimetype:    application/json
+
 
 error_handlers:
         - error:                NoSuchObjectException

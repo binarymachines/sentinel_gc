@@ -6,7 +6,7 @@ from snap import snap
 from snap import core
 import base64
 import json
-from snap.loggers import transform_logger as log
+from snap.loggers import request_logger as log
 #from google.cloud import pubsub_v1
 
 MESSAGES = []
@@ -24,27 +24,18 @@ def pubsub_push_func(input_data, service_objects, **kwargs):
     gcloud_svc = service_objects.lookup('gcloud_config')
     if (input_data.get('token', '') !=
             gcloud_svc.config['PUBSUB_VERIFICATION_TOKEN']):
+        log.info('"token" argument is missing or incorrect.')
         raise snap.MissingInputFieldException(['request arg "token"'])
 
-    #envelope = json.loads(request.data.decode('utf-8'))
-    payload = input_data['message']['data']
-    log.info('received inbound pubsub message:')
-    log.info(payload)
-    MESSAGES.append(payload)
-    # Returning any 2xx status indicates successful receipt of the message.
-    return core.TransformStatus({})
+    log.info('### inside pubsub message handler.')
+    return core.TransformStatus(None)
 
 
+def pubsub_push_alt_func(input_data, service_objects, **kwargs):
+    log.info('### inside alternate pubsub message handler.')
+    return core.TransformStatus(None)
 
 
-
-
-
-
-
-
-
-
-
-
-
+def noop_func(input_data, service_objects, **kwargs):
+    log.info('### a client has accessed the / endpoint.')
+    return core.TransformStatus(None)
