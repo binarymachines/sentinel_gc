@@ -62,6 +62,8 @@ event.add_field('message', True)
 
 default = core.InputShape("default")
 
+default = core.InputShape("default")
+
 
 #------------------------------
 
@@ -72,6 +74,7 @@ xformer.register_transform('test', test_shape, s_transforms.test_func, 'applicat
 xformer.register_transform('pubsub_push', event, s_transforms.pubsub_push_func, 'application/json')
 xformer.register_transform('pubsub_push_alt', event, s_transforms.pubsub_push_alt_func, 'application/json')
 xformer.register_transform('noop', default, s_transforms.noop_func, 'application/json')
+xformer.register_transform('noop_get', default, s_transforms.noop_get_func, 'application/json')
 
 #------------------------------
 
@@ -193,6 +196,32 @@ def noop():
         
         transform_status = xformer.transform('noop', input_data, headers=request.headers)        
         output_mimetype = xformer.target_mimetype_for_transform('noop')
+
+        if transform_status.ok:
+            return Response(transform_status.output_data, status=snap.HTTP_OK, mimetype=output_mimetype)
+        return Response(json.dumps(transform_status.user_data), 
+                        status=transform_status.get_error_code() or snap.HTTP_DEFAULT_ERRORCODE, 
+                        mimetype=output_mimetype) 
+    except Exception as err:
+        log.error("Exception thrown: ", exc_info=1)        
+        raise err
+
+
+@app.route('/', methods=['GET'])
+def noop_get():
+    try:
+        if app.debug:
+            # dump request headers for easier debugging
+            log.info('### HTTP request headers:')
+            log.info(request.headers)
+
+        input_data = {}                
+        input_data.update(request.args)
+        
+        transform_status = xformer.transform('noop_get',
+                                             core.convert_multidict(input_data),
+                                             headers=request.headers)        
+        output_mimetype = xformer.target_mimetype_for_transform('noop_get')
 
         if transform_status.ok:
             return Response(transform_status.output_data, status=snap.HTTP_OK, mimetype=output_mimetype)

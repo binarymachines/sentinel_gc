@@ -39,3 +39,8 @@ def pubsub_push_alt_func(input_data, service_objects, **kwargs):
 def noop_func(input_data, service_objects, **kwargs):
     log.info('### a client has accessed the / endpoint.')
     return core.TransformStatus(None)
+
+
+def noop_get_func(input_data, service_objects, **kwargs):
+    log.info('### a client has accessed the / endpoint using HTTP GET.')
+    return core.TransformStatus(None)

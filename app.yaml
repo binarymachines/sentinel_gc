@@ -20,5 +20,5 @@ env_variables:
   SNAP_CONFIG: s_config.yaml
   SENTINEL_HOME: .
   PUBSUB_VERIFICATION_TOKEN: foobar
-  PUBSUB_TOPIC: projects/sentinel-208514/topics/test
-  GOOGLE_CLOUD_PROJECT: sentinel-208514
+  PUBSUB_TOPIC: projects/binary-sentinel/topics/test
+  GC_PROJECT: binary-sentinel
