@@ -77,7 +77,7 @@ transforms:
         pubsub_push_alt:
             route:              /_ah/push-handlers/test
             method:             POST
-            input_shape:        event
+            input_shape:        default
             output_mimetype:    application/json
 
         noop:
@@ -92,6 +92,9 @@ transforms:
             input_shape:        default
             output_mimetype:    application/json
 
+
+decoders:
+        application/json:       decode_application_json
 
 
 error_handlers:
