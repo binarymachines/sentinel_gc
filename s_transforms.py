@@ -34,6 +34,7 @@ def pubsub_push_func(input_data, service_objects, **kwargs):
 
 def pubsub_push_alt_func(input_data, service_objects, **kwargs):
     log.info('### inside alternate pubsub message handler.')
+    log.info(input_data)
     return core.TransformStatus(None)
 
 
